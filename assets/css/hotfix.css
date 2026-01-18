@@ -1,6 +1,6 @@
 /* Hotfix UI polish for Schedule list + time chips + oversized logos */
 .schedule img, .sc-head img, .sc-left img, .slogo, .carrier-logo, .logo {
-  max-height: 36px !important;
+  max-height: 40px !important;
   max-width: 140px !important;
   width: auto !important;
   height: auto !important;
@@ -64,16 +64,12 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: rgba(148,163,184,.12);
+
   display:flex;
   align-items:center;
   justify-content:center;
   overflow: hidden;
   flex: 0 0 auto;
-}
-.sc-logo img{
-  max-width: 80%;
-  max-height: 80%;
 }
 .sc-logo-fallback{
   font-weight: 700;
