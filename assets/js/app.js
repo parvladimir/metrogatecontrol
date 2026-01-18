@@ -30,6 +30,24 @@ function renderCarrierLogos(codes) {
   return renderCarrierLogo(codes);
 }
 // ---- end helpers ----
+function carrierInitials(label){
+  const text = String(label || '').trim();
+  if (!text) return '?';
+  const parts = text.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 3).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+function carrierBadgeTheme(code){
+  const key = carrierKey(code);
+  const themes = {
+    'DACHSER': { bg: '#facc15', fg: '#1f2937', border: '#fef3c7' },
+    'DHL_PARCEL': { bg: '#facc15', fg: '#b91c1c', border: '#fef3c7' },
+    'DHL_FREIGHT': { bg: '#facc15', fg: '#b91c1c', border: '#fef3c7' },
+    'GLS_DE': { bg: '#1e3a8a', fg: '#f8fafc', border: '#93c5fd' },
+    'GLS_BENELUX': { bg: '#1e3a8a', fg: '#f8fafc', border: '#93c5fd' },
+  };
+  return themes[key] || { bg: '#334155', fg: '#f8fafc', border: '#64748b' };
+}
 let carriers = []; // loaded from DB
 let carrierOrder = []; // carrier codes in UI order
 let carrierLogoLocal = {}; // code -> logo url (relative)

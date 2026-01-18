@@ -9,7 +9,6 @@ auth_require_login();
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Metro Logistics – Gate Control</title>
   <link rel="stylesheet" href="/assets/css/app.css?v=20260114a">
-  <link rel="stylesheet" href="/assets/css/hotfix.css?v=hotfix2">
   <script src="/assets/js/hotfix.js?v=hotfix1"></script>
 </head>
 <body>
