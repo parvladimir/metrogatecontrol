@@ -331,14 +331,19 @@ function renderSchedule(){
   list.innerHTML = carriers.map(c => {
     const code = c.code;
     const name = c.name || c.code;
-    const logo = renderCarrierLogo(code);
-    const logoFallback = `<div class="sc-logo-fallback">${escapeHtml(String(name).slice(0, 2).toUpperCase())}</div>`;
+    const initials = carrierInitials(name || code);
+    const theme = carrierBadgeTheme(code);
+    const badge = `
+      <div class="sc-logo sc-logo--text" style="--logo-bg:${escAttr(theme.bg)};--logo-fg:${escAttr(theme.fg)};--logo-border:${escAttr(theme.border)}">
+        ${escapeHtml(initials)}
+      </div>
+    `;
     const isActive = activeCarrier && carrierKey(activeCarrier) === carrierKey(code);
     return `
       <div class="sc-carrier${isActive ? ' is-active' : ''}" data-code="${escAttr(code)}">
         <div class="sc-head" role="button" tabindex="0" data-code="${escAttr(code)}">
           <div class="sc-left">
-            <div class="sc-logo">${logo || logoFallback}</div>
+            ${badge}
             <div class="sc-name">${escapeHtml(name)}</div>
           </div>
           <div class="sc-hint">Tap to select carrier</div>
