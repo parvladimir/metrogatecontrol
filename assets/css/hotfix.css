@@ -1,0 +1,31 @@
+/* Hotfix UI polish for Schedule list + time chips + oversized logos */
+.schedule img, .sc-head img, .sc-left img, .slogo, .carrier-logo, .logo {
+  max-height: 36px !important;
+  max-width: 140px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: inline-block;
+}
+
+.timechip-wrap{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.timechip{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color: inherit;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+.timechip:hover{ background: rgba(255,255,255,.08); }
+.timechip.is-active{
+  border-color: rgba(90,215,120,.65);
+  background: rgba(90,215,120,.15);
+}
