@@ -9,7 +9,6 @@ auth_require_login();
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Metro Logistics – Gate Control</title>
   <link rel="stylesheet" href="/assets/css/app.css?v=20260114a">
-  <link rel="stylesheet" href="/assets/css/hotfix.css?v=hotfix3">
   <script src="/assets/js/hotfix.js?v=hotfix1"></script>
 </head>
 <body>
@@ -236,7 +235,7 @@ auth_require_login();
   <script>
     window.__BASE__ = '';
   </script>
-  <script src="/assets/js/app.js?v=20260118c"></script>
+  <script src="/assets/js/app.js?v=20260118a"></script>
 
 <footer style="position:fixed;left:0;right:0;bottom:0;padding:10px 16px;font-size:12px;opacity:.75;display:flex;justify-content:space-between;pointer-events:none;">
   <div>Developed by Volodymyr Parashchak</div>
