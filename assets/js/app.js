@@ -30,6 +30,24 @@ function renderCarrierLogos(codes) {
   return renderCarrierLogo(codes);
 }
 // ---- end helpers ----
+function carrierInitials(label){
+  const text = String(label || '').trim();
+  if (!text) return '?';
+  const parts = text.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 3).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+function carrierBadgeTheme(code){
+  const key = carrierKey(code);
+  const themes = {
+    'DACHSER': { bg: '#facc15', fg: '#1f2937', border: '#fef3c7' },
+    'DHL_PARCEL': { bg: '#facc15', fg: '#b91c1c', border: '#fef3c7' },
+    'DHL_FREIGHT': { bg: '#facc15', fg: '#b91c1c', border: '#fef3c7' },
+    'GLS_DE': { bg: '#1e3a8a', fg: '#f8fafc', border: '#93c5fd' },
+    'GLS_BENELUX': { bg: '#1e3a8a', fg: '#f8fafc', border: '#93c5fd' },
+  };
+  return themes[key] || { bg: '#334155', fg: '#f8fafc', border: '#64748b' };
+}
 let carriers = []; // loaded from DB
 let carrierOrder = []; // carrier codes in UI order
 let carrierLogoLocal = {}; // code -> logo url (relative)
@@ -304,72 +322,43 @@ function renderSchedule(){
   if (!list) return;
 
   const carriers = (SCHEDULE_META && Array.isArray(SCHEDULE_META.carriers)) ? SCHEDULE_META.carriers : [];
-  const times = (SCHEDULE_META && Array.isArray(SCHEDULE_META.time_corridors) && SCHEDULE_META.time_corridors.length)
-    ? SCHEDULE_META.time_corridors
-    : (Array.isArray(TIME_CORRIDORS) ? TIME_CORRIDORS : []);
-
-  // Fast lookup: carrier_code + event_time -> schedule item
-  const idx = new Map();
-  (SCHEDULE || []).forEach(it => {
-    const c = (it.carrier_code || it.carrier || '').toString();
-    const t = (it.event_time || it.time || '').toString();
-    if (!c || !t) return;
-    idx.set(c + '|' + t, it);
-  });
-
-  const activate = (code, t)=>{
+  const activeCarrier = carrier.value || '';
+  const activateCarrier = (code)=>{
     if (code) carrier.value = code;
-    if (t) time.value = t;
     carrier.dispatchEvent(new Event('change'));
-    time.dispatchEvent(new Event('change'));
   };
 
   list.innerHTML = carriers.map(c => {
     const code = c.code;
     const name = c.name || c.code;
+    const initials = carrierInitials(name || code);
+    const theme = carrierBadgeTheme(code);
+    const badge = `
+      <div class="sc-logo sc-logo--text" style="--logo-bg:${escAttr(theme.bg)};--logo-fg:${escAttr(theme.fg)};--logo-border:${escAttr(theme.border)}">
+        ${escapeHtml(initials)}
+      </div>
+    `;
+    const isActive = activeCarrier && carrierKey(activeCarrier) === carrierKey(code);
     return `
-      <div class="sc-carrier" data-code="${escAttr(code)}">
+      <div class="sc-carrier${isActive ? ' is-active' : ''}" data-code="${escAttr(code)}">
         <div class="sc-head" role="button" tabindex="0" data-code="${escAttr(code)}">
           <div class="sc-left">
-            ${renderCarrierLogo(code)}
+            ${badge}
             <div class="sc-name">${escapeHtml(name)}</div>
           </div>
-          <div class="sc-hint">Tap to select time</div>
-        </div>
-        <div class="sc-times" style="display:none;">
-          ${times.map(t => {
-            const it = idx.get(code + '|' + t);
-            const isActive = it ? !!it.active : false;
-            const cls = 'sc-time' + (isActive ? ' is-active' : '');
-            return `<button class="${cls}" type="button" data-code="${escAttr(code)}" data-time="${escAttr(t)}">${escapeHtml(t)}</button>`;
-          }).join('')}
+          <div class="sc-hint">Tap to select carrier</div>
         </div>
       </div>
     `;
   }).join('');
 
-  // Toggle open/close
   list.querySelectorAll('.sc-head').forEach(head => {
-    const toggle = ()=>{
-      const wrapper = head.closest('.sc-carrier');
-      const box = wrapper ? wrapper.querySelector('.sc-times') : null;
-      if (!box) return;
-      const open = box.style.display === 'block';
-      list.querySelectorAll('.sc-times').forEach(x => x.style.display = 'none');
-      box.style.display = open ? 'none' : 'block';
+    const selectCarrier = ()=>{
+      const code = head.getAttribute('data-code') || '';
+      activateCarrier(code);
     };
-    head.addEventListener('click', toggle);
-    head.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); toggle(); } });
-  });
-
-  // Time click sets carrier+time
-  list.querySelectorAll('.sc-time').forEach(btn => {
-    btn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      const code = btn.getAttribute('data-code') || '';
-      const t = btn.getAttribute('data-time') || '';
-      activate(code, t);
-    });
+    head.addEventListener('click', selectCarrier);
+    head.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); selectCarrier(); } });
   });
 }
 
