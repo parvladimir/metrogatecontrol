@@ -63,9 +63,11 @@ function carrierKey(v){
 
 function buildCarrierMaps(){
   const byKey = {};
+  const byName = {};
   carriers.forEach(c => {
     const k = carrierKey(c.code);
     byKey[k] = c;
+    if (c.name) byName[carrierKey(c.name)] = k;
   });
 
   // Map carrier logos by normalized key.
@@ -74,7 +76,17 @@ function buildCarrierMaps(){
     logoByKey[carrierKey(code)] = logo;
   });
 
-  return {byKey, logoByKey};
+  return {byKey, byName, logoByKey};
+}
+function resolveCarrierKey(code, name){
+  const {byKey, byName} = buildCarrierMaps();
+  const codeKey = carrierKey(code);
+  if (byKey[codeKey]) return codeKey;
+  const nameKey = carrierKey(name);
+  if (byKey[nameKey]) return nameKey;
+  if (byName[codeKey]) return byName[codeKey];
+  if (byName[nameKey]) return byName[nameKey];
+  return codeKey || nameKey;
 }
 
 /** Load carriers from backend (DB) */
@@ -324,25 +336,26 @@ function renderSchedule(){
   const carriers = (SCHEDULE_META && Array.isArray(SCHEDULE_META.carriers)) ? SCHEDULE_META.carriers : [];
   const activeCarrier = carrier.value || '';
   const activateCarrier = (code)=>{
-    if (code) carrier.value = carrierKey(code);
+    if (code) carrier.value = resolveCarrierKey(code);
     carrier.dispatchEvent(new Event('change'));
   };
 
   list.innerHTML = carriers.map(c => {
     const code = c.code;
-    const name = c.name || c.code;
+    const resolvedKey = resolveCarrierKey(c.code, c.name);
+    const name = carrierLabel(resolvedKey) || c.name || c.code;
     const initials = carrierInitials(name || code);
-    const theme = carrierBadgeTheme(code);
+    const theme = carrierBadgeTheme(resolvedKey);
     const badge = `
       <div class="sc-logo sc-logo--text" style="--logo-bg:${escAttr(theme.bg)};--logo-fg:${escAttr(theme.fg)};--logo-border:${escAttr(theme.border)}">
         ${escapeHtml(initials)}
       </div>
     `;
-    const logo = renderCarrierLogo(code);
-    const isActive = activeCarrier && carrierKey(activeCarrier) === carrierKey(code);
+    const logo = renderCarrierLogo(resolvedKey);
+    const isActive = activeCarrier && carrierKey(activeCarrier) === carrierKey(resolvedKey);
     return `
-      <div class="sc-carrier${isActive ? ' is-active' : ''}" data-code="${escAttr(code)}">
-        <div class="sc-head" role="button" tabindex="0" data-code="${escAttr(code)}">
+      <div class="sc-carrier${isActive ? ' is-active' : ''}" data-code="${escAttr(resolvedKey)}">
+        <div class="sc-head" role="button" tabindex="0" data-code="${escAttr(resolvedKey)}">
           <div class="sc-left">
             ${logo ? `<div class="sc-logo sc-logo--image">${logo}</div>` : badge}
             <div class="sc-name">${escapeHtml(name)}</div>
