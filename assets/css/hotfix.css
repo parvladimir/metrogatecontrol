@@ -1,6 +1,6 @@
 /* Hotfix UI polish for Schedule list + time chips + oversized logos */
 .schedule img, .sc-head img, .sc-left img, .slogo, .carrier-logo, .logo {
-  max-height: 36px !important;
+  max-height: 40px !important;
   max-width: 140px !important;
   width: auto !important;
   height: auto !important;
@@ -28,4 +28,91 @@
 .timechip.is-active{
   border-color: rgba(90,215,120,.65);
   background: rgba(90,215,120,.15);
+}
+
+/* Schedule carrier list refresh */
+.sc-carrier{
+  margin-bottom: 10px;
+}
+.sc-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: linear-gradient(135deg, rgba(15,23,42,.65), rgba(30,41,59,.4));
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.sc-head:hover{
+  border-color: rgba(96,165,250,.45);
+  box-shadow: 0 8px 18px rgba(15,23,42,.35);
+  transform: translateY(-1px);
+}
+.sc-carrier.is-active .sc-head{
+  border-color: rgba(34,197,94,.6);
+  box-shadow: 0 8px 18px rgba(15,23,42,.4);
+}
+.sc-left{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  min-width: 0;
+}
+.sc-logo{
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow: hidden;
+  flex: 0 0 auto;
+  background: #f8fafc;
+  border: 1px solid rgba(15,23,42,.12);
+  box-shadow: 0 6px 12px rgba(15,23,42,.25);
+  padding: 6px;
+}
+.sc-logo--image{
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+.sc-logo--image img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.sc-logo--text{
+  background: var(--logo-bg, #334155);
+  color: var(--logo-fg, #f8fafc);
+  border: 1px solid var(--logo-border, #64748b);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 12px rgba(15,23,42,.25);
+}
+.schedule .slogo{
+  display: block;
+}
+.sc-logo-fallback{
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .02em;
+  color: #e2e8f0;
+}
+.sc-name{
+  font-weight: 600;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sc-hint{
+  font-size: 12px;
+  color: #94a3b8;
+  white-space: nowrap;
 }
