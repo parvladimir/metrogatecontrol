@@ -48,6 +48,19 @@ function carrierBadgeTheme(code){
   };
   return themes[key] || { bg: '#334155', fg: '#f8fafc', border: '#64748b' };
 }
+function carrierBadgeLabel(code, name){
+  const key = carrierKey(code);
+  const labels = {
+    'DACHSER': 'DACHSER',
+    'DHL_PARCEL': 'DHL',
+    'DHL_FREIGHT': 'DHL',
+    'GLS_DE': 'GLS',
+    'GLS_BENELUX': 'GLS',
+  };
+  if (labels[key]) return labels[key];
+  if (name) return String(name).split(/\s+/)[0].toUpperCase();
+  return String(code || '').split(/\s+/)[0].toUpperCase();
+}
 let carriers = []; // loaded from DB
 let carrierOrder = []; // carrier codes in UI order
 let carrierLogoLocal = {}; // code -> logo url (relative)
@@ -335,8 +348,8 @@ function renderSchedule(){
 
   const carriers = (SCHEDULE_META && Array.isArray(SCHEDULE_META.carriers)) ? SCHEDULE_META.carriers : [];
   const activeCarrier = carrier.value || '';
-  const activateCarrier = (code)=>{
-    if (code) carrier.value = resolveCarrierKey(code);
+  const activateCarrier = (code, name)=>{
+    if (code || name) carrier.value = resolveCarrierKey(code, name);
     carrier.dispatchEvent(new Event('change'));
   };
 
@@ -344,20 +357,19 @@ function renderSchedule(){
     const code = c.code;
     const resolvedKey = resolveCarrierKey(c.code, c.name);
     const name = carrierLabel(resolvedKey) || c.name || c.code;
-    const initials = carrierInitials(name || code);
+    const initials = carrierBadgeLabel(resolvedKey, name);
     const theme = carrierBadgeTheme(resolvedKey);
     const badge = `
       <div class="sc-logo sc-logo--text" style="--logo-bg:${escAttr(theme.bg)};--logo-fg:${escAttr(theme.fg)};--logo-border:${escAttr(theme.border)}">
         ${escapeHtml(initials)}
       </div>
     `;
-    const logo = renderCarrierLogo(resolvedKey);
     const isActive = activeCarrier && carrierKey(activeCarrier) === carrierKey(resolvedKey);
     return `
-      <div class="sc-carrier${isActive ? ' is-active' : ''}" data-code="${escAttr(resolvedKey)}">
-        <div class="sc-head" role="button" tabindex="0" data-code="${escAttr(resolvedKey)}">
+      <div class="sc-carrier${isActive ? ' is-active' : ''}" data-code="${escAttr(resolvedKey)}" data-name="${escAttr(name)}">
+        <div class="sc-head" role="button" tabindex="0" data-code="${escAttr(resolvedKey)}" data-name="${escAttr(name)}">
           <div class="sc-left">
-            ${logo ? `<div class="sc-logo sc-logo--image">${logo}</div>` : badge}
+            ${badge}
             <div class="sc-name">${escapeHtml(name)}</div>
           </div>
           <div class="sc-hint">Tap to select carrier</div>
@@ -369,7 +381,8 @@ function renderSchedule(){
   list.querySelectorAll('.sc-head').forEach(head => {
     const selectCarrier = ()=>{
       const code = head.getAttribute('data-code') || '';
-      activateCarrier(code);
+      const name = head.getAttribute('data-name') || '';
+      activateCarrier(code, name);
     };
     head.addEventListener('click', selectCarrier);
     head.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); selectCarrier(); } });
@@ -970,6 +983,8 @@ renderAlertBadge();
 
 (async ()=>{
   await loadCarriers();
+  fillCarrierSelect();
+  buildTimeOptions();
   await loadSchedule();
   await loadGates();
 
