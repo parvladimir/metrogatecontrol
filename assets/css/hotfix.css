@@ -61,20 +61,24 @@
   min-width: 0;
 }
 .sc-logo{
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow: hidden;
   flex: 0 0 auto;
-}
-.sc-logo--image{
   background: #f8fafc;
   border: 1px solid rgba(15,23,42,.12);
   box-shadow: 0 6px 12px rgba(15,23,42,.25);
   padding: 6px;
+}
+.sc-logo--image{
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 .sc-logo--image img{
   width: 100%;
@@ -91,12 +95,8 @@
   text-transform: uppercase;
   box-shadow: 0 6px 12px rgba(15,23,42,.25);
 }
-.schedule .slogo,
-.schedule .sc-logo--image{
-  display: none !important;
-}
-.schedule .sc-logo--text{
-  display: flex !important;
+.schedule .slogo{
+  display: block;
 }
 .sc-logo-fallback{
   font-weight: 700;

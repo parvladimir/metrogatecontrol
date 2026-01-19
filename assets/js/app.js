@@ -324,7 +324,7 @@ function renderSchedule(){
   const carriers = (SCHEDULE_META && Array.isArray(SCHEDULE_META.carriers)) ? SCHEDULE_META.carriers : [];
   const activeCarrier = carrier.value || '';
   const activateCarrier = (code)=>{
-    if (code) carrier.value = code;
+    if (code) carrier.value = carrierKey(code);
     carrier.dispatchEvent(new Event('change'));
   };
 
@@ -338,12 +338,13 @@ function renderSchedule(){
         ${escapeHtml(initials)}
       </div>
     `;
+    const logo = renderCarrierLogo(code);
     const isActive = activeCarrier && carrierKey(activeCarrier) === carrierKey(code);
     return `
       <div class="sc-carrier${isActive ? ' is-active' : ''}" data-code="${escAttr(code)}">
         <div class="sc-head" role="button" tabindex="0" data-code="${escAttr(code)}">
           <div class="sc-left">
-            ${badge}
+            ${logo ? `<div class="sc-logo sc-logo--image">${logo}</div>` : badge}
             <div class="sc-name">${escapeHtml(name)}</div>
           </div>
           <div class="sc-hint">Tap to select carrier</div>
