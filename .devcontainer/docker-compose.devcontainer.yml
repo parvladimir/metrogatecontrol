@@ -1,0 +1,9 @@
+# Dev Container-only override: keep the existing stack and make source mounts editable.
+# The main Compose file, services, ports, networks, volumes and environment are unchanged.
+services:
+  web:
+    volumes:
+      - type: bind
+        source: "/Users/Vladimir/Projects/metrogate"
+        target: "/var/www/html"
+        read_only: false

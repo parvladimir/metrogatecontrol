@@ -1,0 +1,21 @@
+{
+  "name": "metrogate",
+  "dockerComposeFile": [
+    "/Users/Vladimir/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/metrogate-docker/compose.yaml",
+    "docker-compose.devcontainer.yml"
+  ],
+  "service": "web",
+  "workspaceFolder": "/var/www/html",
+  "overrideCommand": false,
+  "shutdownAction": "none",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  }
+}
